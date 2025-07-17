@@ -1,21 +1,19 @@
-// app/products/[id]/page.tsx
-import { notFound } from "next/navigation";
+// src/app/products/[id]/page.tsx
 import { ProductDetail } from "@/components/product-detail";
 import { products } from "@/data/products";
+import { notFound } from "next/navigation";
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-export default async function ProductPage({ params }: Props) {
-  const id = Number(params.id);
-  const product = products.find((p) => p.id === id);
+export default async function ProductPage(props: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await props.params;
+  const id = params.id;
+  const product = products.find((p) => p.id === Number(id));
 
   if (!product) {
-    notFound(); // Show 404 if not found
+    notFound();
   }
 
-  return <ProductDetail product={product} />;
+  const plaintProduct = JSON.parse(JSON.stringify(product));
+  return <ProductDetail product={plaintProduct} />;
 }
